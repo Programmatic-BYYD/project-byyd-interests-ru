@@ -1,41 +1,17 @@
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSKAegO_XsFKuzITukd32ApX3ol_TaVORB243OEWb1kYqh16eMBbkj5glkeaenRhPvJVOl3IqJmmR1a/pub?output=xlsx';
 
-// Пытаемся сразу загрузить данные из кэша браузера
+// Данные и кэш
 let globalData = JSON.parse(localStorage.getItem('iab_data_cache')) || {}; 
 let selected = new Set();
 
+// Раскладка
 const layoutMap = {'q':'й', 'w':'ц', 'e':'у', 'r':'к', 't':'е', 'y':'н', 'u':'г', 'i':'ш', 'o':'щ', 'p':'з', '[':'х', ']':'ъ', 'a':'ф', 's':'ы', 'd':'в', 'f':'а', 'g':'п', 'h':'р', 'j':'о', 'k':'л', 'l':'д', ';':'ж', "'":'э', 'z':'я', 'x':'ч', 'c':'с', 'v':'м', 'b':'и', 'n':'т', 'm':'ь', ',':'б', '.':'ю'};
 const fixLayout = text => text.split('').map(char => layoutMap[char.toLowerCase()] || char).join('');
 
-// Если в кэше есть данные, отображаем их немедленно
-if (Object.keys(globalData).length > 0) {
-    renderAll();
-}
-
-// Поиск совпадений
-function isSmartMatch(text, query) {
-    if (!query) return true;
-    const regex = new RegExp(`(^|\\s|[\\s\\(\\)])(${query})`, 'i');
-    return regex.test(text);
-}
-
-// Подсветка
-function highlight(text, query) {
-    if (!query) return text;
-    const regex = new RegExp(`(${query})`, 'gi');
-    return text.replace(regex, '<mark>$1</mark>');
-}
-
-// Основная функция загрузки (теперь работает быстрее и с кэшем)
+// Загрузка из Google Таблиц
 async function loadData() {
     try {
-        // Устанавливаем таймаут для запроса, чтобы долго не ждать плохую связь
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-        const response = await fetch(SHEET_URL, { signal: controller.signal });
-        clearTimeout(timeoutId);
-
+        const response = await fetch(SHEET_URL);
         const arrayBuffer = await response.arrayBuffer();
         const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -51,26 +27,37 @@ async function loadData() {
             }
         });
 
-        // Проверяем, отличаются ли новые данные от кэшированных
+        // Сравнение с кэшем
         if (JSON.stringify(newData) !== JSON.stringify(globalData)) {
             globalData = newData;
             localStorage.setItem('iab_data_cache', JSON.stringify(newData));
             renderAll();
         }
     } catch (e) {
-        console.warn("Не удалось обновить данные из сети, использую кэш.");
-        if (Object.keys(globalData).length === 0) {
-            document.getElementById('categories').innerHTML = "Ошибка загрузки. Проверьте интернет.";
-        }
+        console.warn("Фоновое обновление не удалось, работаем на кэше.");
     }
 }
 
-// Функции рендеринга
+// Поиск (Умный: с начала слов)
+function isSmartMatch(text, query) {
+    if (!query) return true;
+    const regex = new RegExp(`(^|\\s|[\\s\\(\\)])(${query})`, 'i');
+    return regex.test(text);
+}
+
+// Подсветка (Мягкая)
+function highlight(text, query) {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+}
+
+// Основной рендер категорий
 function renderCategories() {
     const categoriesDiv = document.getElementById('categories');
     if (!categoriesDiv) return;
-    
     categoriesDiv.innerHTML = '';
+    
     const query = document.getElementById('search').value.toLowerCase();
     const fixedQuery = fixLayout(query);
 
@@ -99,9 +86,9 @@ function renderCategories() {
         const activeQuery = isSmartMatch(category, query) ? query : (isSmartMatch(category, fixedQuery) ? fixedQuery : "");
         summary.innerHTML = "";
         summary.append(catCheck);
-        const catTitle = document.createElement('span');
-        catTitle.innerHTML = highlight(category, activeQuery);
-        summary.appendChild(catTitle);
+        const span = document.createElement('span');
+        span.innerHTML = highlight(category, activeQuery);
+        summary.appendChild(span);
         details.appendChild(summary);
 
         const list = document.createElement('div');
@@ -117,9 +104,9 @@ function renderCategories() {
             };
             const activeIntQuery = isSmartMatch(i, query) ? query : (isSmartMatch(i, fixedQuery) ? fixedQuery : "");
             label.append(check);
-            const intTitle = document.createElement('span');
-            intTitle.innerHTML = highlight(i, activeIntQuery);
-            label.appendChild(intTitle);
+            const intSpan = document.createElement('span');
+            intSpan.innerHTML = highlight(i, activeIntQuery);
+            label.appendChild(intSpan);
             list.appendChild(label);
         });
         details.appendChild(list);
@@ -127,7 +114,7 @@ function renderCategories() {
     }
 }
 
-// Работа с выбранными
+// Правая панель
 function renderSelected() {
     const div = document.getElementById('selected');
     if (!div) return;
@@ -142,15 +129,28 @@ function renderSelected() {
     });
 }
 
-// Утилиты
-function removeOne(item) { selected.delete(item); renderAll(); }
-function selectAll() { Object.values(globalData).flat().forEach(i => selected.add(i)); renderAll(); }
-function clearInterests() { selected.clear(); renderAll(); }
-function renderAll() { renderCategories(); renderSelected(); }
+// Глобальные функции (для кнопок в HTML)
+window.removeOne = function(item) { selected.delete(item); renderAll(); };
+window.selectAll = function() { Object.values(globalData).flat().forEach(i => selected.add(i)); renderAll(); };
+window.clearInterests = function() { selected.clear(); renderAll(); };
+window.toggleAllDetails = function(state) { document.querySelectorAll('details').forEach(d => d.open = state); };
+window.renderAll = function() { renderCategories(); renderSelected(); };
+
+window.copyInterests = function() {
+    let output = "";
+    for (const category in globalData) {
+        const items = globalData[category].filter(i => selected.has(i));
+        if (items.length > 0) {
+            output += `${category}\n${items.join('\n')}\n\n`;
+        }
+    }
+    if (output) {
+        navigator.clipboard.writeText(output.trim()).then(() => showToast("✨ Список скопирован"));
+    }
+};
 
 function showToast(message) {
     const container = document.getElementById('toast-container');
-    if (!container) return;
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.textContent = message;
@@ -161,24 +161,13 @@ function showToast(message) {
     }, 2000);
 }
 
-function copyInterests() {
-    let output = "";
-    for (const category in globalData) {
-        const items = globalData[category].filter(i => selected.has(i));
-        if (items.length > 0) {
-            output += `${category}\n${items.join('\n')}\n\n`;
-        }
-    }
-    if (output) {
-        navigator.clipboard.writeText(output.trim()).then(() => showToast("✨ Скопировано"));
-    }
-}
-
+// События поиска
 document.getElementById('search').oninput = () => renderCategories();
 document.getElementById('clear-search').onclick = () => { 
     document.getElementById('search').value = ''; 
     renderAll(); 
 };
 
-// Запуск фоновой загрузки
+// Запуск
+if (Object.keys(globalData).length > 0) renderAll();
 loadData();
