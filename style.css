@@ -1,0 +1,263 @@
+:root {
+  /* Основная палитра */
+  --bg-main: #f6f7f9;
+  --bg-panel: #ffffff;
+  --border: #e5e7eb;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --danger: #dc2626;
+  --hover: #f1f5f9;
+  --highlight: #fde047; /* Цвет подсветки поиска */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* Шапка */
+.header {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Сетка интерфейса */
+.layout {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 16px;
+  padding: 16px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.panel.right-panel {
+  position: sticky;
+  top: 16px;
+  height: calc(100vh - 80px);
+}
+
+/* Заголовки и текст */
+h3 {
+  margin: 0 0 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+h6 {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* Поиск */
+.search-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding: 10px 35px 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-wrapper input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+#clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* Кнопки */
+.main-controls, .actions-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: var(--hover);
+}
+
+.btn-copy {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  flex: 1;
+}
+
+.btn-copy:hover {
+  background: var(--accent-hover);
+  opacity: 1;
+}
+
+/* Списки интересов (details/summary) */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+details {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+summary {
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 160, 230, 0.08); /* Светло-голубой фон как на скрине */
+  font-size: 13px;
+  font-weight: 500;
+}
+
+summary:hover {
+  background: rgba(0, 160, 230, 0.12);
+}
+
+.interests {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.interests label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.interests label:hover {
+  background: var(--hover);
+}
+
+/* Подсветка и чекбоксы */
+mark {
+    background: #e5e7eb; /* Светло-серый */
+    color: var(--text-main);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+/* Выбранные элементы (правая панель) */
+.selected-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.selected-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  background: var(--hover);
+}
+
+.selected-row button {
+  padding: 2px 6px;
+  border: none;
+  background: none;
+  color: var(--danger);
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* Toast уведомления */
+#toast-container {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.toast {
+  background: #1f2937;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
