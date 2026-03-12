@@ -1,51 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAB Interests</title>
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IAB Interests Manager</title>
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div id="toast-container"></div>
 
-    <div class="header">IAB Categories & Interests (BYYD)</div>
+    <div class="header">
+      <div class="header-content">
+        <div class="header-title">
+          IAB Категории приложений и интересы (BYYD)
+        </div>
+        <div class="lang-switcher">
+          <a href="/" class="lang-btn active">RU</a>
+          <a href="/" class="lang-btn">EN</a>
+          <button class="lang-btn" disabled>ES</button>
+        </div>
+      </div>
+    </div>
 
     <div class="layout">
-        <div class="panel">
-            <div class="panel-header">
-                <h3>Интересы</h3>
-                <div class="actions-row">
-                    <button onclick="toggleAllDetails(true)">Развернуть все</button>
-                    <button onclick="toggleAllDetails(false)">Свернуть все</button>
-                </div>
-            </div>
-            
-            <div class="search-wrapper">
-                <input id="search" placeholder="Поиск по интересам" autocomplete="off">
-                <button id="clear-search">✕</button>
-            </div>
-
-            <div class="main-controls">
-                <button onclick="selectAll()">Выбрать всё</button>
-                <button onclick="clearInterests()">Снять всё</button>
-            </div>
-
-            <div id="categories" class="scroll-area"></div>
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Интересы</h3>
+          <div class="actions-row">
+            <button onclick="toggleAllDetails(true)">Развернуть все</button>
+            <button onclick="toggleAllDetails(false)">Свернуть все</button>
+          </div>
         </div>
 
-        <div class="panel right-panel">
-            <h3>Выбрано: <span id="count">0</span></h3>
-            <div id="selected" class="selected-list scroll-area"></div>
-            
-            <div class="footer-actions">
-                <button class="btn-copy" onclick="copyInterests()">Копировать список</button>
-                <button onclick="clearInterests()">Очистить</button>
-            </div>
+        <div class="search-wrapper">
+          <input
+            id="search"
+            placeholder="Поиск по интересам"
+            autocomplete="off"
+          />
+          <button id="clear-search">✕</button>
         </div>
+
+        <div class="main-controls">
+          <button onclick="selectAll()">Выбрать всё</button>
+          <button onclick="clearInterests()">Снять всё</button>
+        </div>
+
+        <div id="categories" class="scroll-area"></div>
+      </div>
+
+      <div class="panel right-panel">
+        <h3>Выбрано: <span id="count">0</span></h3>
+        <div id="selected" class="selected-list scroll-area"></div>
+
+        <div class="footer-actions">
+          <button class="btn-copy" onclick="copyInterests()">
+            Копировать список
+          </button>
+          <button onclick="clearInterests()">Очистить</button>
+        </div>
+      </div>
     </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
