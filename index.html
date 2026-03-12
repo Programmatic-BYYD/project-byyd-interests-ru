@@ -16,8 +16,8 @@
           IAB Категории приложений и интересы (BYYD)
         </div>
         <div class="lang-switcher">
-          <a href="https://programmatic-byyd.github.io/project-byyd-interests-ru/" class="lang-btn active">RU</a>
-          <a href="https://programmatic-byyd.github.io/project-byyd-interests-en/" class="lang-btn">EN</a>
+          <a href="/" class="lang-btn active">RU</a>
+          <a href="/" class="lang-btn">EN</a>
           <button class="lang-btn" disabled>ES</button>
         </div>
       </div>
@@ -45,6 +45,12 @@
         <div class="main-controls">
           <button onclick="selectAll()">Выбрать всё</button>
           <button onclick="clearInterests()">Снять всё</button>
+          <button
+            onclick="downloadFullExcel()"
+            style="border-color: #107c10; color: #107c10"
+          >
+            📥 Скачать список интересов Excel
+          </button>
         </div>
 
         <div id="categories" class="scroll-area"></div>

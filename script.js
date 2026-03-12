@@ -171,3 +171,35 @@ document.getElementById('clear-search').onclick = () => {
 // Запуск
 if (Object.keys(globalData).length > 0) renderAll();
 loadData();
+
+window.downloadFullExcel = function() {
+    // Проверка, загружены ли данные
+    if (!globalData || Object.keys(globalData).length === 0) {
+        showToast("❌ Данные еще не загружены");
+        return;
+    }
+
+    // 1. Формируем плоский массив объектов из иерархии globalData
+    const exportData = [];
+    
+    for (const category in globalData) {
+        globalData[category].forEach(interest => {
+            exportData.push({
+                "Category": category,
+                "Interest": interest
+            });
+        });
+    }
+
+    // 2. Используем библиотеку XLSX для создания файла
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "IAB Interests");
+
+    // Немного красоты: задаем ширину колонок
+    worksheet['!cols'] = [{ wch: 35 }, { wch: 50 }];
+
+    // 3. Сохранение файла
+    XLSX.writeFile(workbook, "IAB_Full_List.xlsx");
+    showToast("✅ Весь список успешно выгружен");
+};
