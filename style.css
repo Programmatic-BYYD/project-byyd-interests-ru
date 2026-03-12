@@ -9,7 +9,9 @@
   --accent-hover: #1d4ed8;
   --danger: #dc2626;
   --hover: #f1f5f9;
-  --highlight: #fde047; /* Цвет подсветки поиска */
+  --highlight: #fde047;
+  /* Ширина контейнера (можно менять под себя) */
+  --container-width: 1400px; 
 }
 
 * {
@@ -24,30 +26,93 @@ body {
   line-height: 1.5;
 }
 
-/* Шапка */
+/* --- ШАПКА --- */
 .header {
-  padding: 14px 24px;
+  height: 64px;
   border-bottom: 1px solid var(--border);
   background: var(--bg-panel);
-  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* Центрирование контента внутри всей ширины экрана */
+  display: flex;
+  justify-content: center;
+}
+
+.header-content {
+  width: 100%;
+  max-width: var(--container-width);
+  /* Отступы должны быть такими же, как у .layout ниже */
+  padding: 0 16px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  font-weight: 700;
   font-size: 16px;
 }
 
-/* Сетка интерфейса */
+/* Переключатель языков */
+.lang-switcher {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+  gap: 2px;
+  border: 1px solid var(--border);
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  min-width: 45px;
+  padding: 0 12px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.lang-btn:hover:not(.active):not([disabled]) {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.lang-btn.active {
+  background: #ffffff;
+  color: var(--accent);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.lang-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- РАБОЧАЯ ОБЛАСТЬ --- */
 .layout {
   display: grid;
   grid-template-columns: 2.2fr 1fr;
   gap: 16px;
-  padding: 16px;
-  max-width: 1600px;
-  margin: 0 auto;
+  padding: 16px; /* Должно совпадать с padding в .header-content */
+  max-width: var(--container-width);
+  margin: 0 auto; /* Центрирует сетку */
 }
 
 .panel {
   background: var(--bg-panel);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -55,25 +120,11 @@ body {
 
 .panel.right-panel {
   position: sticky;
-  top: 16px;
-  height: calc(100vh - 80px);
+  top: 80px; /* Высота шапки + отступ */
+  height: calc(100vh - 96px);
 }
 
-/* Заголовки и текст */
-h3 {
-  margin: 0 0 16px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-h6 {
-  margin: 0 0 16px;
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--text-muted);
-}
-
-/* Поиск */
+/* --- ПОИСК И КНОПКИ --- */
 .search-wrapper {
   position: relative;
   margin-bottom: 12px;
@@ -85,12 +136,14 @@ h6 {
   border-radius: 8px;
   border: 1px solid var(--border);
   font-size: 13px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #f9fafb;
+  transition: all 0.2s;
 }
 
 .search-wrapper input:focus {
   outline: none;
   border-color: var(--accent);
+  background: #fff;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
@@ -106,7 +159,6 @@ h6 {
   padding: 4px;
 }
 
-/* Кнопки */
 .main-controls, .actions-row {
   display: flex;
   gap: 8px;
@@ -124,7 +176,7 @@ button {
   transition: all 0.2s;
 }
 
-button:hover {
+button:hover:not(.btn-copy) {
   background: var(--hover);
 }
 
@@ -136,12 +188,7 @@ button:hover {
   flex: 1;
 }
 
-.btn-copy:hover {
-  background: var(--accent-hover);
-  opacity: 1;
-}
-
-/* Списки интересов (details/summary) */
+/* --- СПИСКИ И КАТЕГОРИИ --- */
 .scroll-area {
   flex: 1;
   overflow-y: auto;
@@ -161,13 +208,9 @@ summary {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(0, 160, 230, 0.08); /* Светло-голубой фон как на скрине */
+  background: rgba(0, 160, 230, 0.08);
   font-size: 13px;
   font-weight: 500;
-}
-
-summary:hover {
-  background: rgba(0, 160, 230, 0.12);
 }
 
 .interests {
@@ -190,9 +233,9 @@ summary:hover {
   background: var(--hover);
 }
 
-/* Подсветка и чекбоксы */
+/* --- ВСПОМОГАТЕЛЬНОЕ --- */
 mark {
-    background: #fcff91bd;
+    background: var(--highlight);
     color: var(--text-main);
     padding: 0 2px;
     border-radius: 2px;
@@ -205,13 +248,6 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-/* Выбранные элементы (правая панель) */
-.selected-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .selected-row {
   display: flex;
   align-items: center;
@@ -220,6 +256,7 @@ input[type="checkbox"] {
   font-size: 13px;
   border-radius: 6px;
   background: var(--hover);
+  margin-bottom: 4px;
 }
 
 .selected-row button {
@@ -238,7 +275,6 @@ input[type="checkbox"] {
   border-top: 1px solid var(--border);
 }
 
-/* Toast уведомления */
 #toast-container {
   position: fixed;
   bottom: 30px;
@@ -253,7 +289,6 @@ input[type="checkbox"] {
   padding: 12px 24px;
   border-radius: 50px;
   font-size: 14px;
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
   animation: slideUp 0.3s ease-out;
 }
 
